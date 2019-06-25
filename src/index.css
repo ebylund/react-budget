@@ -1,13 +1,221 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    /*height: 100%;*/
+    /*background: #3023ae;*/
+    /*background: -moz-linear-gradient(-45deg,  #3023ae 0%, #c86dd7 100%);*/
+    /*background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#3023ae), color-stop(100%,#c86dd7));*/
+    /*background: -webkit-linear-gradient(-45deg,  #3023ae 0%,#c86dd7 100%);*/
+    /*background: -o-linear-gradient(-45deg,  #3023ae 0%,#c86dd7 100%);*/
+    /*background: -ms-linear-gradient(-45deg,  #3023ae 0%,#c86dd7 100%);*/
+    /*background: linear-gradient(135deg,  #3023ae 0%,#c86dd7 100%);*/
+    /*background-attachment: fixed;*/
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+:root {
+    --border-color: #ddd;
+    --date-width: 15%;
+    --description-width: 45%;
+    --category-width: 15%;
+    --amount-width: 12%;
+    --icons-width: 10%;
+}
+
+#title {
+    text-align: center;
+    padding: 20px;
+}
+
+#container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/***************************/
+/* Start of main input css */
+/***************************/
+
+#transaction-input-fields {
+    height: 60px;
+    padding: 10px;
+}
+
+#transaction-input-fields .input-error {
+    background-color: #FFF0F4;
+    border: 1px solid #C31846 !important;
+}
+
+#transaction-input-fields .trans-input {
+    height: 40px;
+    border: none;
+    background-color: #EFEFEF;
+    padding: 0 7px;
+}
+
+#transaction-input-fields #trans-date-input {
+    box-shadow: none;
+    width: 160px;
+}
+
+#transaction-input-fields #trans-description-input {
+    width: 420px;
+}
+
+#transaction-input-fields #trans-amount-input {
+    width: 120px;
+}
+
+#transaction-input-fields #trans-category-input {
+    position: relative;
+    top: -1px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+#transaction-input-fields #add-transaction {
+    position: relative;
+    top: -2px;
+    margin: 0;
+}
+
+/*************************/
+/* End of main input css */
+/*************************/
+
+/********************/
+/* Start header css */
+/********************/
+
+#transactions-header {
+    border-bottom: 1px solid var(--border-color);
+    height: 40px;
+}
+
+.header {
+    line-height: 40px;
+    display: inline-block;
+    font-size: 16px;
+    font-style: italic;
+    margin: 0;
+    padding: 0 7px;
+}
+
+.header:hover {
+    background-color: #EFEFEF;
+}
+
+.header > img {
+    display: none;
+}
+
+.header > .direction-desc {
+    display: inline-block !important;
+}
+
+.header > .direction-asc {
+    display: inline-block !important;
+    -webkit-transform:rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+#header-date {
+    width: var(--date-width);
+}
+
+#header-description {
+    width: var(--description-width);
+}
+
+#header-category {
+    width: var(--category-width);
+}
+
+#header-amount {
+    width: var(--amount-width);
+}
+
+#header-icons {
+    width: var(--icons-width);
+}
+
+/******************/
+/* End header css */
+/******************/
+
+/************************/
+/* Start transaction css*/
+/************************/
+
+.transaction .trans-date {
+    width: 15%;
+}
+
+.transaction .trans-description {
+    width: 45%;
+}
+
+.transaction .trans-category {
+    width: 15%;
+}
+
+.transaction .trans-amount {
+    width: 12%;
+    text-align: right;
+}
+
+.transaction .trans-icons {
+    width: 10%;
+}
+
+.transaction .icon {
+    display: inline-block;
+    width: 45%;
+}
+
+.transaction .icon  img {
+    width: 14px;
+    display: block;
+    margin: auto;
+}
+
+.transaction .item {
+    display: inline-block;
+    height: 35px;
+    border-right: 1px solid var(--border-color);
+    line-height: 35px;
+    padding: 0 12px;
+}
+
+.transaction .item:last-child {
+    border-right: none;
+}
+
+.transaction {
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
+}
+
+/**********************/
+/* End transaction css*/
+/**********************/
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    float: right;
+    margin-top: 15px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
 }
