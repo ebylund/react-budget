@@ -219,3 +219,10 @@ body {
     opacity: 0;
     filter: alpha(opacity=0);
 }
+
+#loader {
+    position: relative;
+    top: 100px;
+    display: block;
+    margin: 0 auto;
+}

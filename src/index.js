@@ -209,11 +209,23 @@ const formatter = new Intl.NumberFormat('en-US', {
 //     })
 // });
 
-class TransactionInputFields extends React.Component {
-    constructor(props) {
-        super(props)
+class DateInput extends React.Component {
+    render() {
+        return (
+            <input type="date" value={this.props.value} onChange={this.props.onDateChange} className="trans-input" id="trans-date-input" name="trans-date" placeholder="date" /*defaultValue="2019-06-19"*//>
+        );
     }
+}
 
+class DescriptionInput extends React.Component {
+    render() {
+        return (
+            <input type="text" value={this.props.value} onChange={this.props.onDescriptionChange} className="trans-input" id="trans-description-input" name="trans-description" placeholder="description" /*defaultValue="Frei's Fruit Market"*//>
+        );
+    }
+}
+
+class CategoryInput extends React.Component {
     render() {
         const categories = ["Groceries", "Business", "Eating Out", "Shopping", "Treats", "Auto", "Home"];
         const categoryOptions = categories.map((cat, ind) => {
@@ -221,16 +233,88 @@ class TransactionInputFields extends React.Component {
         });
 
         return (
+            <select type="text" value={this.props.value} onChange={this.props.onCategoryChange} className="trans-input" id="trans-category-input" name="trans-category">
+                {categoryOptions}
+            </select>
+        );
+    }
+}
+
+class AmountInput extends React.Component {
+    render() {
+        return (
+            <input
+                type="number"
+                value={this.props.value}
+                step=".01"
+                onChange={this.props.onAmountChange}
+                className="trans-input"
+                id="trans-amount-input"
+                name="trans-amount"
+                placeholder="amount" /*defaultValue="29.52"*/
+            />
+        );
+    }
+}
+
+class TransactionInputFields extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dateInput: "2019-03-01",
+            descriptionInput: "Sweetums",
+            categoryInput: "Treats",
+            amountInput: 10.01,
+        }
+    }
+
+    onDateChange = (e) => {
+        this.setState({dateInput: e.target.value});
+    };
+
+    onDescriptionChange = (e) => {
+        this.setState({descriptionInput: e.target.value});
+    };
+
+    onCategoryChange = (e) => {
+        this.setState({categoryInput: e.target.value});
+    };
+
+    onAmountChange = (e) => {
+        this.setState({amountInput: e.target.value});
+    };
+
+    render() {
+        return (
             <div id="transaction-input-fields">
-                <input type="date" className="trans-input" id="trans-date-input" name="trans-date" placeholder="date" defaultValue="2019-06-19"/>
-                <input type="text" className="trans-input" id="trans-description-input" name="trans-description" placeholder="description" defaultValue="Frei's Fruit Market"/>
-                <input type="number" step=".01" className="trans-input" id="trans-amount-input" name="trans-amount" placeholder="amount" defaultValue="29.52"/>
-                <select type="text" className="trans-input" id="trans-category-input" name="trans-category">
-                    {categoryOptions}
-                </select>
-                <button id="add-transaction" onClick={() => null} className="btn btn-primary">+</button>
+                <DateInput value={this.state.dateInput} onDateChange={this.onDateChange}/>
+                <DescriptionInput value={this.state.descriptionInput} onDescriptionChange={this.onDescriptionChange}/>
+                <CategoryInput value={this.state.categoryInput} onCategoryChange={this.onCategoryChange}/>
+                <AmountInput value={this.state.amountInput} onAmountChange={this.onAmountChange}/>
+                <button id="add-transaction" onClick={this.addTransaction.bind(this)} className="btn btn-primary">+</button>
             </div>
         );
+    }
+
+    addTransaction() {
+        var props = this.props;
+        var trans = {
+            "transaction": {
+                "date": this.state.dateInput,
+                "description": this.state.descriptionInput,
+                "category": this.state.categoryInput,
+                "amount": parseFloat(this.state.amountInput),
+            }
+        };
+        fetch("http://localhost:4000/api/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(trans)
+        }).then(function (data) {
+            props.refreshTransactions();
+        })
     }
 }
 
@@ -285,7 +369,7 @@ class Transaction extends React.Component {
                     </div>
 
                     <div id="destroy" className="icon">
-                        <img id="trash" src={deleteIcon} alt="pencil"/>
+                        <img id="trash" onClick={this.props.remove.bind(this, trans.id)} src={deleteIcon} alt="pencil"/>
                     </div>
 
                 </div>
@@ -300,52 +384,97 @@ class Main extends React.Component {
         this.state = {
             isLoaded: false,
             transactions: [],
-            // transactions: [
-            //     {id: 1, date: "2019-06-24", description: "Swig Treats", category: "Treats", amount: 6.90},
-            //     {id: 2, date: "2019-06-23", description: "Lowes", category: "Home", amount: 96.09},
-            //     {id: 3, date: "2019-06-27", description: "George's Corner", category: "Eating Out", amount: 43.72},
-            //     {id: 4, date: "2019-06-18", description: "Ledge's Golf Club", category: "Fun", amount: 52.44},
-            // ],
-            // transactions: fetchTransactions()
         };
-
     }
 
-    componentDidMount() {
+    deleteTransaction(id) {
+        var that = this;
+        console.log(id);
+        fetch(`http://localhost:4000/api/transactions/${id}`, {method: "DELETE"})
+            .then(function () {
+                that.setTransactions();
+            })
+//         .then(function () {
+//             fetchTransactionsAndPopulateList()
+//                 .then(function() {
+//                     refreshTransactions();
+//                     return true;
+//                 });
+//             return true;
+//         })
+    }
+
+    setTransactions() {
         fetchTransactions()
             .then((json) => {
                 return json.data;
             })
             .then((resp) => {
+                var sorted = resp.sort(function (a, b) {
+                    return (a.date > b.date) ? 1 : -1;
+                });
                 this.setState({
                     isLoaded: true,
-                    transactions: resp,
+                    transactions: sorted,
                 });
-                console.log(resp)
             })
+    }
+
+    componentDidMount() {
+        this.setTransactions()
     }
 
     render() {
         var trans;
-        // if (this.state.isLoaded) {
-        //     trans = this.state.transactions.map((tran) => {
-        //         return <Transaction key={tran.id} transactions={tran}/>
-        //     });
-        // } else {
-            trans = <div id="loader"><img src="images/tail-spin.svg" width="50" alt=""/></div>;
-        // }
+        if (this.state.isLoaded) {
+            trans = this.state.transactions.map((tran) => {
+                return <Transaction key={tran.id} transactions={tran} remove={this.deleteTransaction.bind(this)} />
+            });
+        } else {
+            trans = <Loader />
+        }
 
         return (
             <div id="container">
                 <Title />
-                <TransactionInputFields />
+                <TransactionInputFields refreshTransactions={this.setTransactions.bind(this)}/>
                 <Headers/>
                 <div id="transactions-container">
                     {trans}
                 </div>
+                <Uploader />
             </div>
         );
     }
+}
+
+class Uploader extends React.Component {
+
+    render() {
+        return (
+            <div className="fileUpload btn btn-primary">
+                <span>Bulk Transactions</span>
+                <input
+                    type="file"
+                    className="upload"
+                    id="uploader"
+                    accept="text/csv, .csv"
+                    // onchange="uploadcsv(this)"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="csv file with format of: date, description, category, amount"
+                />
+            </div>
+        )
+    }
+}
+
+function Loader() {
+    return (
+        <div id="loader-container">
+            <img id="loader" src="images/tail-spin.svg" width="50" alt=""/>
+        </div>
+    );
 }
 
 function fetchTransactions() {

@@ -4,79 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Budget App</title>
-<!--  <link rel="stylesheet" href="reset.css">-->
+  <!--  <link rel="stylesheet" href="reset.css">-->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
+  <div id="root"></div>
 
-<template id="transaction-template">
-  <div class="transaction">
-    <div class="item trans-date"></div>
-    <div class="item trans-description"></div>
-    <div class="item trans-category"></div>
-    <div class="item trans-amount"></div>
-    <div class="item trans-icons">
-      <div id="update" class="icon"><img id="pencil" src="resources/pencil-blue.svg" alt="pencil"></div>
-      <div id="destroy" class="icon"><img id="trash" src="resources/trash-red.svg" alt="pencil"></div>
-    </div>
-  </div>
-</template>
-
-<!--<div id="container">-->
-<!--  <div id="title">-->
-<!--    <h2>Budget Tracker™</h2>-->
-<!--  </div>-->
-<!--  <div id="transaction-input-fields">-->
-<!--    <input type="date" class="trans-input" id="trans-date-input" name="trans-date" placeholder="date" value="2019-06-19">-->
-<!--    <input type="text" class="trans-input" id="trans-description-input" name="trans-description" placeholder="description" value="Frei's Fruit Market">-->
-<!--    <input type="number" step=".01" class="trans-input" id="trans-amount-input" name="trans-amount" placeholder="amount" value="29.52">-->
-<!--    <select type="text" class="trans-input" id="trans-category-input" name="trans-category">-->
-
-<!--      &lt;!&ndash;TODO: Make category options customizable&ndash;&gt;-->
-
-<!--      <option value="Groceries">Groceries</option>-->
-<!--      <option value="Business">Business</option>-->
-<!--      <option value="Eating Out">Eating Out</option>-->
-<!--      <option value="Shopping">Shopping</option>-->
-<!--      <option value="Treats">Treats</option>-->
-<!--      <option value="Auto">Auto</option>-->
-<!--      <option value="Home">Home</option>-->
-<!--    </select>-->
-<!--    <button id="add-transaction" onclick="addTransaction()" class="btn btn-primary">+</button>-->
-<!--  </div>-->
-
-<!--  <div id="transactions-header">-->
-<!--    <div class="header" id="header-date">Date <img class="direction-desc" data-direction="desc" src="resources/caret-bottom.svg" alt="caret"></div>-->
-<!--    <div class="header" id="header-description">Description <img class="" data-direction="off" src="resources/caret-bottom.svg" alt="caret"></div>-->
-<!--    <div class="header" id="header-category">Category <img class="" data-direction="off" src="resources/caret-bottom.svg" alt="caret"></div>-->
-<!--    <div class="header" id="header-amount">Amount <img class="" data-direction="off" src="resources/caret-bottom.svg" alt="caret"></div>-->
-<!--    <div class="header" id="header-icons">Actions</div>-->
-<!--  </div>-->
-
-<!--  <div id="transactions-container"></div>-->
-
-<!--  <div class="fileUpload btn btn-primary">-->
-<!--    <span>Bulk Transactions</span>-->
-<!--    <input-->
-<!--            type="file"-->
-<!--            class="upload"-->
-<!--            id="uploader"-->
-<!--            accept="text/csv, .csv"-->
-<!--            onchange="uploadcsv(this)"-->
-<!--            data-toggle="tooltip"-->
-<!--            data-placement="top"-->
-<!--            title="csv file with format of: date, description, category, amount"-->
-<!--    />-->
-<!--  </div>-->
-
-<!--</div>-->
-
-<div id="root"></div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script src="index.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="index.js"></script>
 </body>
 </html>
