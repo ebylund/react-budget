@@ -2,6 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+import Headers from './headers.js';
+import Title from './title.js';
+import Loader from './loader.js';
+
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: "USD",
@@ -261,10 +265,10 @@ class TransactionInputFields extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dateInput: "2019-03-01",
-            descriptionInput: "Sweetums",
-            categoryInput: "Treats",
-            amountInput: 10.01,
+            dateInput: "",
+            descriptionInput: "",
+            categoryInput: "",
+            amountInput: 0,
         }
     }
 
@@ -306,6 +310,12 @@ class TransactionInputFields extends React.Component {
                 "amount": parseFloat(this.state.amountInput),
             }
         };
+        this.setState({
+            dateInput: "",
+            descriptionInput: "",
+            categoryInput: "",
+            amountInput: 0,
+        });
         fetch("http://localhost:4000/api/transactions", {
             method: "POST",
             headers: {
@@ -314,42 +324,10 @@ class TransactionInputFields extends React.Component {
             body: JSON.stringify(trans)
         }).then(function (data) {
             props.refreshTransactions();
-        })
+        });
     }
 }
 
-function Headers() {
-    const caretImage = "images/caret-bottom.svg";
-    return (
-        <div id="transactions-header">
-            <div className="header" id="header-date">Date
-                <img className="direction-desc" data-direction="desc" src={caretImage} alt="caret"/>
-            </div>
-
-            <div className="header" id="header-description">Description
-                <img className="" data-direction="off" src={caretImage} alt="caret"/>
-            </div>
-
-            <div className="header" id="header-category">Category
-                <img className="" data-direction="off" src={caretImage} alt="caret"/>
-            </div>
-
-            <div className="header" id="header-amount">Amount
-                <img className="" data-direction="off" src={caretImage} alt="caret"/>
-            </div>
-
-            <div className="header" id="header-icons">Actions</div>
-        </div>
-    );
-}
-
-function Title(props) {
-    return (
-        <div id="title">
-            <h2>Budgeteer</h2>
-        </div>
-    )
-}
 
 class Transaction extends React.Component {
     render() {
@@ -365,11 +343,11 @@ class Transaction extends React.Component {
                 <div className="item trans-icons">
 
                     <div id="update" className="icon">
-                        <img id="pencil" src={editIcon} alt="pencil"/>
+                        <img id="pencil" onClick={this.props.update.bind(this, trans.id)} src={editIcon} alt="pencil"/>
                     </div>
 
                     <div id="destroy" className="icon">
-                        <img id="trash" onClick={this.props.remove.bind(this, trans.id)} src={deleteIcon} alt="pencil"/>
+                        <img id="trash" onClick={this.props.remove.bind(this, trans.id)} src={deleteIcon} alt="trash"/>
                     </div>
 
                 </div>
@@ -384,24 +362,16 @@ class Main extends React.Component {
         this.state = {
             isLoaded: false,
             transactions: [],
+            showModal: false,
         };
     }
 
     deleteTransaction(id) {
         var that = this;
-        console.log(id);
         fetch(`http://localhost:4000/api/transactions/${id}`, {method: "DELETE"})
             .then(function () {
                 that.setTransactions();
             })
-//         .then(function () {
-//             fetchTransactionsAndPopulateList()
-//                 .then(function() {
-//                     refreshTransactions();
-//                     return true;
-//                 });
-//             return true;
-//         })
     }
 
     setTransactions() {
@@ -420,15 +390,65 @@ class Main extends React.Component {
             })
     }
 
+    uploadFile(e) {
+        var that = this;
+        console.log(e.target.files[0]);
+        const files = e.target.files;
+
+        if (files === undefined || files.length === 0) return;
+        var file = files[0];
+        if (file === undefined) return;
+
+        //eslint-disable-next-line
+        if (confirm(`Confirm import for file: ${file.name}`)) {
+            var formData = new FormData();
+            formData.append('transactions-file', file);
+
+            console.log(formData);
+            fetch("http://localhost:4000/api/transactions/upload", {
+                method: "POST",
+                body: formData
+            })
+                .then(function() {
+                    that.setTransactions()
+                })
+        }
+        // e.target.files = undefined;
+        // item.value = "";
+    }
+
+    updateTransaction(id) {
+        console.log(id);
+        this.setState({
+            ...this.state,
+            showModal: true,
+            updateId: id,
+        })
+        // ReactDOM.render(
+            // document.getElementById("root")
+    }
+
     componentDidMount() {
         this.setTransactions()
+    }
+
+    closeModal() {
+        this.setState({
+            ...this.state,
+            showModal: false,
+        })
     }
 
     render() {
         var trans;
         if (this.state.isLoaded) {
             trans = this.state.transactions.map((tran) => {
-                return <Transaction key={tran.id} transactions={tran} remove={this.deleteTransaction.bind(this)} />
+                return <Transaction
+                    key={tran.id}
+                    transactions={tran}
+                    remove={this.deleteTransaction.bind(this)}
+                    update={this.updateTransaction.bind(this)}
+                />
             });
         } else {
             trans = <Loader />
@@ -442,39 +462,199 @@ class Main extends React.Component {
                 <div id="transactions-container">
                     {trans}
                 </div>
-                <Uploader />
+                <Uploader
+                    refreshTransactions={this.setTransactions.bind(this)}
+                    uploadFile={this.uploadFile.bind(this)}
+                />
+                {/*<button><img id="download-icon" src="images/data-transfer-download.svg" alt="download-icon"/></button>*/}
+                <EditModal
+                    show={this.state.showModal}
+                    updateId={this.state.updateId}
+                    refreshTransactions={this.setTransactions.bind(this)}
+                    closeModal={this.closeModal.bind(this)}
+                />
             </div>
         );
     }
 }
 
 class Uploader extends React.Component {
-
     render() {
         return (
             <div className="fileUpload btn btn-primary">
-                <span>Bulk Transactions</span>
+                <span>Upload <img width="12px" id="upload-icon" src="images/data-transfer-upload-white.svg" alt="pencil"/></span>
                 <input
                     type="file"
                     className="upload"
                     id="uploader"
                     accept="text/csv, .csv"
-                    // onchange="uploadcsv(this)"
+                    onChange={this.props.uploadFile.bind(this)}
                     data-toggle="tooltip"
                     data-placement="top"
                     title="csv file with format of: date, description, category, amount"
                 />
             </div>
+
+
         )
     }
 }
 
-function Loader() {
-    return (
-        <div id="loader-container">
-            <img id="loader" src="images/tail-spin.svg" width="50" alt=""/>
-        </div>
-    );
+class UpdateTransactionInputFields extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fetchedResponse: false,
+            dateUpdateInput: "",
+            descriptionUpdateInput: "",
+            categoryUpdateInput: "",
+            amountUpdateInput: 0,
+        }
+    }
+
+    fetchAndPopulateInputValues() {
+        var that = this;
+        fetch(`http://localhost:4000/api/transactions/${this.props.updateId}`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function(json) {
+                console.log(json);
+                var transaction = json.data;
+                that.setState({
+                    ...that.state,
+                    fetchedResponse: true,
+                    dateUpdateInput: transaction.date,
+                    descriptionUpdateInput: transaction.description,
+                    categoryUpdateInput: transaction.category,
+                    amountUpdateInput: transaction.amount,
+                })
+            })
+    }
+
+    componentDidMount() {
+        this.fetchAndPopulateInputValues()
+    }
+
+    onDateChange = (e) => {
+        this.setState({dateUpdateInput: e.target.value});
+    };
+
+    onDescriptionChange = (e) => {
+        this.setState({descriptionUpdateInput: e.target.value});
+    };
+
+    onCategoryChange = (e) => {
+        this.setState({categoryUpdateInput: e.target.value});
+    };
+
+    onAmountChange = (e) => {
+        this.setState({amountUpdateInput: e.target.value});
+    };
+
+    render() {
+        if (!this.state.fetchedResponse) {
+            return (<div>Loading...</div>)
+        } else {
+            return (
+                <div id="transaction-input-fields">
+                    {/*<DateInput value={this.state.dateInput} onDateChange={this.onDateChange}/>*/}
+                    <input type="date" value={this.state.dateUpdateInput} onChange={this.onDateChange} className="trans-input" id="trans-date-input" name="trans-date" placeholder="date" /*defaultValue="2019-06-19"*//>
+                    <input type="text" value={this.state.descriptionUpdateInput} onChange={this.onDescriptionChange} className="trans-input" id="trans-description-input" name="trans-description" placeholder="description" /*defaultValue="Frei's Fruit Market"*//>
+                    {/*<DescriptionInput value={this.state.descriptionUpdateInput} onDescriptionChange={this.onDescriptionChange}/>*/}
+                    <CategoryUpdateInput value={this.state.categoryUpdateInput} onCategoryChange={this.onCategoryChange}/>
+                    <input
+                        type="number"
+                        value={this.state.amountUpdateInput}
+                        step=".01"
+                        onChange={this.onAmountChange}
+                        className="trans-input"
+                        id="trans-amount-input"
+                        name="trans-amount"
+                        placeholder="amount" /*defaultValue="29.52"*/
+                    />
+                    <button id="update-transaction" onClick={this.updateTransaction.bind(this)} className="btn btn-primary">update</button>
+                </div>
+            );
+        }
+    }
+
+    updateTransaction() {
+        var props = this.props;
+        var trans = {
+            "transaction": {
+                "date": this.state.dateUpdateInput,
+                "description": this.state.descriptionUpdateInput,
+                "category": this.state.categoryUpdateInput,
+                "amount": parseFloat(this.state.amountUpdateInput),
+            }
+        };
+        this.setState({
+            dateUpdateInput: "",
+            descriptionUpdateInput: "",
+            categoryUpdateInput: "",
+            amountUpdateInput: 0,
+        });
+        fetch(`http://localhost:4000/api/transactions/${this.props.updateId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(trans)
+        }).then(function (data) {
+            props.refreshTransactions();
+            props.closeModal();
+        });
+    }
+}
+
+class CategoryUpdateInput extends React.Component {
+    render() {
+        const categories = ["Groceries", "Business", "Eating Out", "Shopping", "Treats", "Auto", "Home"];
+        const categoryOptions = categories.map((cat, ind) => {
+            return (<option key={ind} value={cat}>{cat}</option>)
+        });
+
+        return (
+            <select type="text" value={this.props.value} onChange={this.props.onCategoryChange} className="trans-input" id="trans-category-input" name="trans-category">
+                {categoryOptions}
+            </select>
+        );
+    }
+}
+
+class EditModal extends React.Component {
+    constructor(props) {
+        super(props);
+        // this.state = {
+        //     show: false
+        // }
+    }
+
+    closeModal() {
+        this.setState({
+            ...this.state,
+
+        })
+    }
+    render() {
+        if (!this.props.show) {
+            return null;
+        } else {
+            return (
+                <div id="modal-background">
+                    <div id="edit-modal">
+                        {/*{this.props.updateId}*/}
+                        <UpdateTransactionInputFields
+                            updateId={this.props.updateId}
+                            refreshTransactions={this.props.refreshTransactions.bind(this)}
+                            closeModal={this.props.closeModal.bind(this)}
+                        />
+                    </div>
+                </div>
+            )
+        }
+    }
 }
 
 function fetchTransactions() {
