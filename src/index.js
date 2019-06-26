@@ -233,11 +233,12 @@ class CategoryInput extends React.Component {
     render() {
         const categories = ["Groceries", "Business", "Eating Out", "Shopping", "Treats", "Auto", "Home"];
         const categoryOptions = categories.map((cat, ind) => {
-            return (<option key={ind} value={cat}>{cat}</option>)
+            return (<option key={ind + 1} value={cat}>{cat}</option>)
         });
 
         return (
             <select type="text" value={this.props.value} onChange={this.props.onCategoryChange} className="trans-input" id="trans-category-input" name="trans-category">
+                <option key={0} value={""}> - </option>
                 {categoryOptions}
             </select>
         );
@@ -268,34 +269,32 @@ class TransactionInputFields extends React.Component {
             dateInput: "",
             descriptionInput: "",
             categoryInput: "",
-            amountInput: 0,
+            amountInput: "",
         }
     }
 
-    onDateChange = (e) => {
-        this.setState({dateInput: e.target.value});
-    };
+    onDateChange = (e) => { this.setState({dateInput: e.target.value})};
+    onDescriptionChange = (e) => {this.setState({descriptionInput: e.target.value})};
+    onCategoryChange = (e) => {this.setState({categoryInput: e.target.value})};
+    onAmountChange = (e) => {this.setState({amountInput: e.target.value})};
 
-    onDescriptionChange = (e) => {
-        this.setState({descriptionInput: e.target.value});
-    };
-
-    onCategoryChange = (e) => {
-        this.setState({categoryInput: e.target.value});
-    };
-
-    onAmountChange = (e) => {
-        this.setState({amountInput: e.target.value});
-    };
+    // TODO: abstract input change logic to a single function
+    // onInputChange = (e) => {this.setState({})};
 
     render() {
+        const isEnabled =
+            this.state.dateInput &&
+            this.state.descriptionInput &&
+            this.state.categoryInput &&
+            this.state.amountInput !== null;
+
         return (
             <div id="transaction-input-fields">
                 <DateInput value={this.state.dateInput} onDateChange={this.onDateChange}/>
                 <DescriptionInput value={this.state.descriptionInput} onDescriptionChange={this.onDescriptionChange}/>
                 <CategoryInput value={this.state.categoryInput} onCategoryChange={this.onCategoryChange}/>
                 <AmountInput value={this.state.amountInput} onAmountChange={this.onAmountChange}/>
-                <button id="add-transaction" onClick={this.addTransaction.bind(this)} className="btn btn-primary">+</button>
+                <button id="add-transaction" disabled={!isEnabled} onClick={this.addTransaction.bind(this)} className="btn btn-primary">+</button>
             </div>
         );
     }
@@ -439,6 +438,11 @@ class Main extends React.Component {
         })
     }
 
+    toggleCaret = (name, e) => {
+        console.log("e: " + e);
+        console.log("name: " + name);
+    };
+
     render() {
         var trans;
         if (this.state.isLoaded) {
@@ -458,7 +462,7 @@ class Main extends React.Component {
             <div id="container">
                 <Title />
                 <TransactionInputFields refreshTransactions={this.setTransactions.bind(this)}/>
-                <Headers/>
+                <Headers toggleCaret={this.toggleCaret.bind(this)}/>
                 <div id="transactions-container">
                     {trans}
                 </div>
