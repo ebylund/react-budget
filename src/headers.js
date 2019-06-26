@@ -1,13 +1,9 @@
 import React from "react";
 
 export default class Headers extends React.Component{
-    constructor(props) {
-        super(props);
-    }
-
     headerClick(header) {
-        console.log(header);
-        this.props.toggleCaret.bind(this, header)();
+        // console.log(header);
+        this.props.sort.bind(this, header)();
     }
 
     render() {
