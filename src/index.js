@@ -104,6 +104,9 @@ class Main extends React.Component {
                     update={this.updateTransaction.bind(this)}
                 />
             });
+            // TODO: transaction is inserted at selected sorted location
+            // TODO: calling sort here results in: Maximum update call exceeded error
+            // this.sortTransactions(this.state.sortField)
         } else {
             trans = <Loader />
         }
@@ -122,6 +125,7 @@ class Main extends React.Component {
         this.setState({
             ...this.state,
             transactions: sorted,
+            sortField: headerField,
             sortDirection: !this.state.sortDirection,
         });
     }
@@ -136,7 +140,11 @@ class Main extends React.Component {
             <div id="container">
                 <Title />
                 <TransactionInputFields refreshTransactions={this.setTransactions.bind(this)}/>
-                <Headers sort={this.sortTransactions.bind(this)} toggleCaret={this.toggleCaret.bind(this)} />
+                <Headers
+                    sort={this.sortTransactions.bind(this)}
+                    sortDirection={this.state.sortDirection}
+                    sortField={this.state.sortField}
+                    toggleCaret={this.toggleCaret.bind(this)} />
 
                 <div id="transactions-container">
                     {this.createTransactionComponents()}

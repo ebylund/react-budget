@@ -1,33 +1,25 @@
 import React from "react";
 
-export default class Headers extends React.Component{
-    headerClick(header) {
-        // console.log(header);
-        this.props.sort.bind(this, header)();
-    }
+const caretImage = "images/caret-bottom.svg";
 
-    render() {
-        const caretImage = "images/caret-bottom.svg";
-        return (
-            <div id="transactions-header">
-                <div className="header" id="header-date" onClick={this.headerClick.bind(this, "date")}>Date
-                    <img className="direction-desc" data-direction="desc" src={caretImage} alt="caret"/>
-                </div>
+function generateHeader(field, props) {
+    var direction = props.sortDirection ? "desc" : "asc";
+    var className = props.sortField === field ? `direction-${direction}` : "";
 
-                <div className="header" id="header-description" onClick={this.headerClick.bind(this, "description")}>Description
-                    <img className="" data-direction="off" src={caretImage} alt="caret"/>
-                </div>
+    return <div key={field} className="header" id={`header-${field}`} onClick={props.sort.bind(this, field)}>{field} &nbsp;
+        <img className={className} data-direction={direction} src={caretImage} alt="caret"/>
+    </div>
+}
 
-                <div className="header" id="header-category" onClick={this.headerClick.bind(this, "category")}>Category
-                    <img className="" data-direction="off" src={caretImage} alt="caret"/>
-                </div>
+export default function Headers(props) {
+    var headers = ["date", "description", "category", "amount"].map((field) => {
+        return generateHeader(field, props);
+    });
 
-                <div className="header" id="header-amount" onClick={this.headerClick.bind(this, "amount")}>Amount
-                    <img className="" data-direction="off" src={caretImage} alt="caret"/>
-                </div>
-
-                <div className="header" id="header-icons">Actions</div>
-            </div>
-        );
-    }
+    return (
+        <div id="transactions-header">
+            {headers}
+            <div className="header" id="header-icons">Actions</div>
+        </div>
+    );
 }

@@ -98,6 +98,7 @@
     font-style: italic;
     margin: 0;
     padding: 0 7px;
+    text-transform: capitalize;
 }
 
 .header:hover {
