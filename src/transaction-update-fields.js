@@ -1,6 +1,10 @@
 import React from 'react';
 import {DateUpdateInput, DescriptionUpdateInput, CategoryUpdateInput, AmountUpdateInput} from "./update-inputs";
 
+require('dotenv').config();
+
+const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:4000";
+
 export default class UpdateTransactionInputFields extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +19,7 @@ export default class UpdateTransactionInputFields extends React.Component {
 
     fetchAndPopulateInputValues() {
         var that = this;
-        fetch(`http://localhost:4000/api/transactions/${this.props.updateId}`)
+        fetch(`${baseUrl}/api/transactions/${this.props.updateId}`)
             .then(function (response) {
                 return response.json();
             })
@@ -49,7 +53,7 @@ export default class UpdateTransactionInputFields extends React.Component {
             categoryUpdateInput: "",
             amountUpdateInput: 0,
         });
-        fetch(`http://localhost:4000/api/transactions/${this.props.updateId}`, {
+        fetch(`${baseUrl}/api/transactions/${this.props.updateId}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"

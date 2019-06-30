@@ -10,6 +10,10 @@ import TransactionInputFields from './transaction-input-fields';
 import Uploader from './uploader';
 import EditModal from './edit-modal';
 
+require('dotenv').config();
+
+const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:4000";
+
 class Main extends React.Component {
     constructor(props) {
         super(props);
@@ -28,7 +32,7 @@ class Main extends React.Component {
 
     deleteTransaction(id) {
         var that = this;
-        fetch(`http://localhost:4000/api/transactions/${id}`, {method: "DELETE"})
+        fetch(`${baseUrl}/api/transactions/${id}`, {method: "DELETE"})
             .then(function () {
                 that.setTransactions();
             })
@@ -65,7 +69,7 @@ class Main extends React.Component {
             formData.append('transactions-file', file);
 
             console.log(formData);
-            fetch("http://localhost:4000/api/transactions/upload", {
+            fetch(`${baseUrl}/api/transactions/upload`, {
                 method: "POST",
                 body: formData
             })
@@ -130,11 +134,6 @@ class Main extends React.Component {
         });
     }
 
-    toggleCaret = (name, e) => {
-        console.log("e: " + e);
-        console.log("name: " + name);
-    };
-
     render() {
         return (
             <div id="container">
@@ -144,17 +143,19 @@ class Main extends React.Component {
                     sort={this.sortTransactions.bind(this)}
                     sortDirection={this.state.sortDirection}
                     sortField={this.state.sortField}
-                    toggleCaret={this.toggleCaret.bind(this)} />
+                />
 
                 <div id="transactions-container">
                     {this.createTransactionComponents()}
                 </div>
 
+                <Downloader />
+
                 <Uploader
                     refreshTransactions={this.setTransactions.bind(this)}
                     uploadFile={this.uploadFile.bind(this)}
                 />
-                {/*<button><img id="download-icon" src="images/data-transfer-download.svg" alt="download-icon"/></button>*/}
+
                 <EditModal
                     show={this.state.showModal}
                     updateId={this.state.updateId}
@@ -166,8 +167,20 @@ class Main extends React.Component {
     }
 }
 
+function Downloader() {
+    return (
+        <a href={`${baseUrl}/api/transactions.csv`}>
+            <div className="starLoad btn btn-primary">
+                        <span>
+                            <img id="download-icon" src="images/data-transfer-download-white.svg" alt="download-icon"/>
+                        </span>
+            </div>
+        </a>
+    )
+}
+
 function fetchTransactions() {
-    return fetch("http://localhost:4000/api/transactions")
+    return fetch(`${baseUrl}/api/transactions`)
         .then(function (response) {
             return response.json();
         })

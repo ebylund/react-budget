@@ -3,8 +3,8 @@ import React from 'react';
 export default class Uploader extends React.Component {
     render() {
         return (
-            <div className="fileUpload btn btn-primary">
-                <span>Upload <img width="12px" id="upload-icon" src="images/data-transfer-upload-white.svg" alt="pencil"/></span>
+            <div className="starLoad fileUpload btn btn-primary">
+                <span><img id="upload-icon" src="images/data-transfer-upload-white.svg" alt="pencil"/></span>
                 <input
                     type="file"
                     className="upload"

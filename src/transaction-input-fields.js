@@ -1,6 +1,10 @@
 import React from "react";
 import {AmountInput, CategoryInput, DateInput, DescriptionInput} from "./post-inputs";
 
+require('dotenv').config();
+
+const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:4000";
+
 export default class TransactionInputFields extends React.Component {
     constructor(props) {
         super(props);
@@ -54,7 +58,7 @@ export default class TransactionInputFields extends React.Component {
             categoryInput: "",
             amountInput: 0,
         });
-        fetch("http://localhost:4000/api/transactions", {
+        fetch(`${baseUrl}/api/transactions`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

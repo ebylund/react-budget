@@ -204,11 +204,19 @@
 /* End transaction css*/
 /**********************/
 
+.starLoad {
+    float: right;
+    margin: 15px 3px;
+}
+
+.starLoad img{
+    width: 18px;
+}
+
 .fileUpload {
     position: relative;
     overflow: hidden;
-    float: right;
-    margin-top: 15px;
+
 }
 .fileUpload input.upload {
     position: absolute;
@@ -230,9 +238,9 @@
 }
 
 #upload-icon {
-    position: relative;
-    top: -2px;
-    margin-left: 5px;
+    /*position: relative;*/
+    /*top: -2px;*/
+    /*margin-left: 5px;*/
 }
 
 #modal-background {
