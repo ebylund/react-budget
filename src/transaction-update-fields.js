@@ -18,14 +18,14 @@ export default class UpdateTransactionInputFields extends React.Component {
     }
 
     fetchAndPopulateInputValues() {
-        var that = this;
+        const that = this;
         fetch(`${baseUrl}/api/transactions/${this.props.updateId}`)
             .then(function (response) {
                 return response.json();
             })
             .then(function(json) {
                 console.log(json);
-                var transaction = json.data;
+                const transaction = json.data;
                 that.setState({
                     ...that.state,
                     fetchedResponse: true,
@@ -38,8 +38,8 @@ export default class UpdateTransactionInputFields extends React.Component {
     }
 
     updateTransaction() {
-        var props = this.props;
-        var trans = {
+        const props = this.props;
+        const trans = {
             "transaction": {
                 "date": this.state.dateUpdateInput,
                 "description": this.state.descriptionUpdateInput,
@@ -59,7 +59,7 @@ export default class UpdateTransactionInputFields extends React.Component {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(trans)
-        }).then(function (data) {
+        }).then(function () {
             props.refreshTransactions();
             props.closeModal();
         });
@@ -73,18 +73,15 @@ export default class UpdateTransactionInputFields extends React.Component {
     onAmountChange = (e) => {this.setState({amountUpdateInput: e.target.value})};
 
     render() {
-        if (!this.state.fetchedResponse) {
-            return (<div>Loading...</div>)
-        } else {
-            return (
-                <div id="transaction-input-fields">
-                    <DateUpdateInput value={this.state.dateUpdateInput} onDateChange={this.onDateChange}/>
-                    <DescriptionUpdateInput value={this.state.descriptionUpdateInput} onDescriptionChange={this.onDescriptionChange}/>
-                    <CategoryUpdateInput value={this.state.categoryUpdateInput} onCategoryChange={this.onCategoryChange}/>
-                    <AmountUpdateInput value={this.state.amountUpdateInput} onAmountChange={this.onAmountChange} />
-                    <button id="update-transaction" onClick={this.updateTransaction.bind(this)} className="btn btn-primary">update</button>
-                </div>
-            );
-        }
+        if (!this.state.fetchedResponse) return <div>Loading...</div>;
+        return (
+            <div id="transaction-input-fields">
+                <DateUpdateInput value={this.state.dateUpdateInput} onDateChange={this.onDateChange}/>
+                <DescriptionUpdateInput value={this.state.descriptionUpdateInput} onDescriptionChange={this.onDescriptionChange}/>
+                <CategoryUpdateInput value={this.state.categoryUpdateInput} onCategoryChange={this.onCategoryChange}/>
+                <AmountUpdateInput value={this.state.amountUpdateInput} onAmountChange={this.onAmountChange} />
+                <button id="update-transaction" onClick={this.updateTransaction.bind(this)} className="btn btn-primary">update</button>
+            </div>
+        );
     }
 }

@@ -2,12 +2,6 @@ import React from 'react';
 import UpdateTransactionInputFields from './transaction-update-fields';
 
 export default class EditModal extends React.Component {
-    closeModal() {
-        this.setState({
-            ...this.state,
-
-        })
-    }
     render() {
         if (!this.props.show) {
             return null;

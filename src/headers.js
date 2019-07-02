@@ -3,8 +3,8 @@ import React from "react";
 const caretImage = "images/caret-bottom.svg";
 
 function generateHeader(field, props) {
-    var direction = props.sortDirection ? "desc" : "asc";
-    var className = props.sortField === field ? `direction-${direction}` : "";
+    const direction = props.sortDirection ? "desc" : "asc";
+    const className = props.sortField === field ? `direction-${direction}` : "";
 
     return <div key={field} className="header" id={`header-${field}`} onClick={props.sort.bind(this, field)}>{field} &nbsp;
         <img className={className} data-direction={direction} src={caretImage} alt="caret"/>
@@ -12,7 +12,7 @@ function generateHeader(field, props) {
 }
 
 export default function Headers(props) {
-    var headers = ["date", "description", "category", "amount"].map((field) => {
+    const headers = ["date", "description", "category", "amount"].map((field) => {
         return generateHeader(field, props);
     });
 

@@ -16,8 +16,6 @@ export default class Uploader extends React.Component {
                     title="csv file with format of: date, description, category, amount"
                 />
             </div>
-
-
         )
     }
 }

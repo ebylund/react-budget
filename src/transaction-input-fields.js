@@ -43,8 +43,8 @@ export default class TransactionInputFields extends React.Component {
     }
 
     addTransaction() {
-        var props = this.props;
-        var trans = {
+        const props = this.props;
+        const trans = {
             "transaction": {
                 "date": this.state.dateInput,
                 "description": this.state.descriptionInput,
@@ -64,7 +64,7 @@ export default class TransactionInputFields extends React.Component {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(trans)
-        }).then(function (data) {
+        }).then(function () {
             props.refreshTransactions();
         });
     }

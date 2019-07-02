@@ -9,6 +9,7 @@ import Transaction from './transaction.js';
 import TransactionInputFields from './transaction-input-fields';
 import Uploader from './uploader';
 import EditModal from './edit-modal';
+import Downloader from './downloader'
 
 require('dotenv').config();
 
@@ -31,7 +32,7 @@ class Main extends React.Component {
     }
 
     deleteTransaction(id) {
-        var that = this;
+        const that = this;
         fetch(`${baseUrl}/api/transactions/${id}`, {method: "DELETE"})
             .then(function () {
                 that.setTransactions();
@@ -44,7 +45,7 @@ class Main extends React.Component {
                 return json.data;
             })
             .then((resp) => {
-                var sorted = resp.sort(function (a, b) {
+                const sorted = resp.sort(function (a, b) {
                     return (a.date > b.date) ? 1 : -1;
                 });
                 this.setState({
@@ -55,17 +56,17 @@ class Main extends React.Component {
     }
 
     uploadFile(e) {
-        var that = this;
+        const that = this;
         console.log(e.target.files[0]);
         const files = e.target.files;
 
         if (files === undefined || files.length === 0) return;
-        var file = files[0];
+        const file = files[0];
         if (file === undefined) return;
 
         //eslint-disable-next-line
         if (confirm(`Confirm import for file: ${file.name}`)) {
-            var formData = new FormData();
+            const formData = new FormData();
             formData.append('transactions-file', file);
 
             console.log(formData);
@@ -82,7 +83,6 @@ class Main extends React.Component {
     }
 
     updateTransaction(id) {
-        console.log(id);
         this.setState({
             ...this.state,
             showModal: true,
@@ -98,29 +98,24 @@ class Main extends React.Component {
     }
 
     createTransactionComponents() {
-        var trans;
-        if (this.state.isLoaded) {
-            trans = this.state.transactions.map((tran) => {
-                return <Transaction
-                    key={tran.id}
-                    transactions={tran}
-                    remove={this.deleteTransaction.bind(this)}
-                    update={this.updateTransaction.bind(this)}
-                />
-            });
-            // TODO: transaction is inserted at selected sorted location
-            // TODO: calling sort here results in: Maximum update call exceeded error
-            // this.sortTransactions(this.state.sortField)
-        } else {
-            trans = <Loader />
-        }
-        return trans
+        if (!this.state.isLoaded) return <Loader/>;
+        return this.state.transactions.map((tran) => {
+            return <Transaction
+                key={tran.id}
+                transactions={tran}
+                remove={this.deleteTransaction.bind(this)}
+                update={this.updateTransaction.bind(this)}
+            />
+        });
+        // TODO: transaction is inserted at selected sorted location
+        // TODO: calling sort here results in: Maximum update call exceeded error
+        // this.sortTransactions(this.state.sortField)
     }
 
     sortTransactions(headerField, e) {
-        var transactions = [...this.state.transactions];
-        var desc = this.state.sortDirection;
-        var sorted = transactions.sort((a, b) => {
+        const transactions = [...this.state.transactions];
+        const desc = this.state.sortDirection;
+        const sorted = transactions.sort((a, b) => {
             return desc ?
                 ((a[headerField] < b[headerField]) ? 1 : -1) :
                 ((a[headerField] > b[headerField]) ? 1 : -1);
@@ -165,18 +160,6 @@ class Main extends React.Component {
             </div>
         );
     }
-}
-
-function Downloader() {
-    return (
-        <a href={`${baseUrl}/api/transactions.csv`}>
-            <div className="starLoad btn btn-primary">
-                        <span>
-                            <img id="download-icon" src="images/data-transfer-download-white.svg" alt="download-icon"/>
-                        </span>
-            </div>
-        </a>
-    )
 }
 
 function fetchTransactions() {
